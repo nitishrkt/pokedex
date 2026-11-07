@@ -1,0 +1,51 @@
+<nav class="paginator" aria-label="Pagination">
+  <label class="paginator__size">
+    Rows per page
+    <select
+      #sizeSelect
+      class="paginator__select"
+      [disabled]="disabled()"
+      (change)="onPageSizeChange(sizeSelect.value)"
+    >
+      @for (option of pageSizeOptions(); track option) {
+        <option [value]="option" [selected]="option === pageSize()">{{ option }}</option>
+      }
+    </select>
+  </label>
+
+  <p class="paginator__range">{{ rangeLabel() }}</p>
+
+  <div class="paginator__controls">
+    <button
+      class="paginator__button"
+      type="button"
+      aria-label="Previous page"
+      [disabled]="!canGoBack()"
+      (click)="pageChange.emit(page() - 1)"
+    >
+      <img
+        src="assets/icons/ic_chevron_left.svg"
+        width="20"
+        height="20"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+    <span class="paginator__page">Page {{ page() }} of {{ pageCount() }}</span>
+    <button
+      class="paginator__button"
+      type="button"
+      aria-label="Next page"
+      [disabled]="!canGoForward()"
+      (click)="pageChange.emit(page() + 1)"
+    >
+      <img
+        src="assets/icons/ic_chevron_right.svg"
+        width="20"
+        height="20"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+  </div>
+</nav>
