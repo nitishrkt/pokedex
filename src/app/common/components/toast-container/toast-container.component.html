@@ -1,0 +1,23 @@
+<div class="toast-container" aria-live="polite">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div
+      class="toast-container__toast"
+      [class.toast-container__toast--success]="toast.kind === 'success'"
+      [class.toast-container__toast--error]="toast.kind === 'error'"
+      (mouseenter)="toastService.pause(toast.id)"
+      (mouseleave)="toastService.resume(toast.id)"
+      (focusin)="toastService.pause(toast.id)"
+      (focusout)="toastService.resume(toast.id)"
+    >
+      <p class="toast-container__message">{{ toast.message }}</p>
+      <button
+        class="toast-container__dismiss"
+        type="button"
+        aria-label="Dismiss notification"
+        (click)="toastService.dismiss(toast.id)"
+      >
+        <img src="assets/icons/ic_close.svg" width="16" height="16" alt="" aria-hidden="true" />
+      </button>
+    </div>
+  }
+</div>
