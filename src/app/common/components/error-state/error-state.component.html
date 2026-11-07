@@ -1,0 +1,12 @@
+<div class="error-state" [class.error-state--compact]="compact()">
+  <div class="error-state__text" role="alert">
+    @if (!compact()) {
+      <p class="error-state__title">{{ heading() }}</p>
+    }
+    <p class="error-state__message">{{ error().message }}</p>
+  </div>
+  <button class="error-state__retry" type="button" (click)="retry.emit()">
+    <img src="assets/icons/ic_refresh.svg" width="16" height="16" alt="" aria-hidden="true" />
+    Retry
+  </button>
+</div>

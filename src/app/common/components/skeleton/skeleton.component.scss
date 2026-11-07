@@ -1,0 +1,24 @@
+@use 'app/common/styles/shared' as *;
+
+:host {
+  @extend %sk-shimmer;
+  display: block;
+  flex-shrink: 0;
+  max-width: 100%;
+  border-radius: 8px;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+:host(.skeleton--text) {
+  border-radius: 4px;
+}
+
+// Never narrowed by max-width, so a circle cannot squash into an ellipse.
+:host(.skeleton--circle) {
+  max-width: none;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
