@@ -12,7 +12,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"*.{js,json}\"",
     "prepare": "husky",
     "mock": "json-graphql-server db.js --port 4000",
-    "start:all": "concurrently -k -n mock,app -c magenta,cyan \"npm:mock\" \"npm:start\""
+    "start:all": "concurrently -k -n mock,app -c magenta,cyan \"npm:mock\" \"npm:start\"",
+    "test:coverage": "ng test --watch=false --coverage"
   },
   "private": true,
   "packageManager": "npm@11.16.0",
@@ -33,6 +34,7 @@
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.1.12",
     "angular-eslint": "21.4.0",
     "concurrently": "^10.0.7",
     "eslint": "^10.3.0",
