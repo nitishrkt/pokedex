@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 0 24px;
+    height: 64px;
+    background: var(--color-surface-overlay);
+    backdrop-filter: var(--backdrop-blur);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__brand {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__nav-link {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    &:hover {
+      color: var(--color-text);
+      background: var(--color-surface-2);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      color: var(--color-text);
+      background: var(--color-primary);
+
+      &:hover {
+        background: var(--color-primary);
+      }
+    }
+  }
+
+  &__content {
+    flex: 1;
+    padding: 24px;
+  }
+}
