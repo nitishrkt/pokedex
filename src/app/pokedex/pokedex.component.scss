@@ -1,5 +1,27 @@
 .pokedex-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1280px;
+  min-width: 0;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+  }
+
   &__title {
     font-size: 1.5rem;
+  }
+
+  // Reserve the line, so an empty summary (error state) does not collapse it.
+  &__summary {
+    min-height: 1.5em;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
   }
 }

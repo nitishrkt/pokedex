@@ -1,3 +1,35 @@
 <section class="pokedex-page">
-  <h1 class="pokedex-page__title">Pokédex</h1>
+  <header class="pokedex-page__header">
+    <h1 class="pokedex-page__title">Pokédex</h1>
+    <p class="pokedex-page__summary" role="status">{{ summary() }}</p>
+  </header>
+
+  <app-pokemon-filters
+    [search]="query().search"
+    [type]="query().type"
+    (searchChange)="store.setSearch($event)"
+    (typeChange)="store.setTypeFilter($event)"
+  />
+
+  <app-pokemon-table
+    [state]="table()"
+    [sort]="query().sort"
+    [selectedId]="selectedId()"
+    [pageSize]="query().pageSize"
+    (sortChange)="store.setSort($event)"
+    (rowSelect)="selectedId.set($event)"
+    (retry)="store.loadAll()"
+    (clearFilters)="clearFilters()"
+  />
+
+  <app-paginator
+    [page]="pagination().page"
+    [pageCount]="pagination().pageCount"
+    [total]="pagination().total"
+    [disabled]="pagination().disabled"
+    [pageSize]="query().pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (pageChange)="store.setPage($event)"
+    (pageSizeChange)="store.setPageSize($event)"
+  />
 </section>

@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { NEVER } from 'rxjs';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
+import { PokemonApiService } from './pokedex/services/pokemon-api.service';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -13,7 +15,11 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [provideRouter(routes)],
+      providers: [
+        provideRouter(routes),
+        // The Pokédex page loads on navigation; keep it loading, off the network.
+        { provide: PokemonApiService, useValue: { getPokemonList$: () => NEVER } },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
