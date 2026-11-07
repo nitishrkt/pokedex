@@ -1,0 +1,170 @@
+@let current = state();
+<div
+  #region
+  class="pokemon-table"
+  role="region"
+  aria-label="Pokémon"
+  tabindex="-1"
+  [attr.aria-busy]="current.status === 'loading'"
+>
+  <div class="pokemon-table__scroll">
+    <table class="pokemon-table__table">
+      <caption class="pokemon-table__caption">
+        {{ caption() }}
+      </caption>
+      <thead>
+        <tr>
+          @for (column of columns; track column.label) {
+            <th
+              class="pokemon-table__th"
+              scope="col"
+              [class]="'pokemon-table__th--' + column.variant"
+              [attr.aria-sort]="ariaSort(column.sortKey)"
+            >
+              @if (column.sortKey; as key) {
+                @let active = sort().key === key;
+                <button
+                  class="pokemon-table__sort"
+                  type="button"
+                  [class.pokemon-table__sort--active]="active"
+                  [class.pokemon-table__sort--asc]="active && sort().direction === 'asc'"
+                  (click)="sortChange.emit(key)"
+                >
+                  @if (column.title) {
+                    <abbr [title]="column.title">{{ column.label }}</abbr>
+                  } @else {
+                    {{ column.label }}
+                  }
+                  <img
+                    class="pokemon-table__sort-icon"
+                    src="assets/icons/ic_arrow_down.svg"
+                    width="14"
+                    height="14"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </button>
+              } @else if (column.hideLabel) {
+                <span class="pokemon-table__hidden">{{ column.label }}</span>
+              } @else {
+                {{ column.label }}
+              }
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (current.status === 'loading') {
+          @for (index of skeletonRows(); track index) {
+            <tr class="pokemon-table__row pokemon-table__row--skeleton">
+              <td class="pokemon-table__cell"><app-skeleton variant="text" width="28px" /></td>
+              <td class="pokemon-table__cell">
+                <app-skeleton class="pokemon-table__sprite" variant="circle" height="40px" />
+              </td>
+              <td class="pokemon-table__cell"><app-skeleton variant="text" width="60%" /></td>
+              <td class="pokemon-table__cell">
+                <app-skeleton width="100px" height="22px" />
+              </td>
+              @for (key of statKeys; track key) {
+                <td class="pokemon-table__cell pokemon-table__cell--num">
+                  <app-skeleton class="pokemon-table__num-skeleton" variant="text" width="28px" />
+                </td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (row of rows(); track row.pokemon.id) {
+            @let selected = row.pokemon.id === selectedId();
+            <tr
+              class="pokemon-table__row"
+              [class.pokemon-table__row--selected]="selected"
+              [attr.aria-current]="selected ? 'true' : null"
+            >
+              <td
+                class="pokemon-table__cell pokemon-table__cell--id"
+                [class.pokemon-table__cell--sorted]="sort().key === 'id'"
+              >
+                {{ row.pokemon.id }}
+              </td>
+              <td class="pokemon-table__cell">
+                @if (hasSprite(row.pokemon)) {
+                  <img
+                    class="pokemon-table__sprite"
+                    [src]="row.pokemon.spriteUrl"
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                    alt=""
+                    (error)="onSpriteError(row.pokemon.id)"
+                  />
+                } @else {
+                  <span
+                    class="pokemon-table__sprite pokemon-table__sprite--missing"
+                    aria-hidden="true"
+                  >
+                    ?
+                  </span>
+                }
+              </td>
+              <th
+                class="pokemon-table__cell pokemon-table__cell--name"
+                scope="row"
+                [class.pokemon-table__cell--sorted]="sort().key === 'name'"
+              >
+                <button
+                  class="pokemon-table__select"
+                  type="button"
+                  [title]="row.pokemon.name | displayName"
+                  (click)="rowSelect.emit(row.pokemon.id)"
+                >
+                  {{ row.pokemon.name | displayName }}
+                </button>
+              </th>
+              <td class="pokemon-table__cell">
+                <span class="pokemon-table__types">
+                  @for (type of row.pokemon.types; track type) {
+                    <app-type-badge [type]="type" />
+                  }
+                </span>
+              </td>
+              @for (stat of row.stats; track stat.key) {
+                <td
+                  class="pokemon-table__cell pokemon-table__cell--num"
+                  [class.pokemon-table__cell--sorted]="sort().key === stat.key"
+                  [class.pokemon-table__cell--total]="stat.key === 'totalStats'"
+                >
+                  {{ stat.value }}
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (current.status === 'error') {
+    <app-error-state
+      class="pokemon-table__state"
+      heading="Couldn't load the Pokédex"
+      [error]="current.error"
+      (retry)="onRetry()"
+    />
+  } @else if (emptyKind() === 'no-results') {
+    <app-empty-state
+      class="pokemon-table__state"
+      heading="No Pokémon match your filters"
+      message="Try a different name, or another type."
+    >
+      <button class="pokemon-table__clear" type="button" (click)="onClearFilters()">
+        Clear filters
+      </button>
+    </app-empty-state>
+  } @else if (emptyKind() === 'no-data') {
+    <app-empty-state
+      class="pokemon-table__state"
+      heading="No Pokémon available"
+      message="The Pokédex came back empty. Please check back later."
+    />
+  }
+</div>
