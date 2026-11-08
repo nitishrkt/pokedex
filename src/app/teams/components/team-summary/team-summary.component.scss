@@ -1,0 +1,86 @@
+:host {
+  display: block;
+}
+
+.team-summary {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-2);
+
+  &__title {
+    margin-bottom: 12px;
+    font-size: 1.125rem;
+  }
+
+  &__subtitle {
+    margin: 16px 0 8px;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__total {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+  }
+
+  &__total-value {
+    color: var(--color-accent);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &__total-label {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  &__note {
+    margin: 8px 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+  }
+
+  &__types {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__type {
+    display: grid;
+    grid-template-columns: 80px 1fr 20px;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__bar {
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  &__count {
+    font-size: 0.875rem;
+    text-align: right;
+  }
+}

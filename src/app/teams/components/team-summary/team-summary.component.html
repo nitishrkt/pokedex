@@ -1,0 +1,56 @@
+<section
+  class="team-summary"
+  aria-labelledby="team-summary-title"
+  [attr.aria-busy]="summary() === 'loading'"
+>
+  <h2 id="team-summary-title" class="team-summary__title">
+    {{ team() ? team()?.name : 'Team summary' }}
+  </h2>
+
+  @let s = summary();
+  @if (s === null) {
+    <app-empty-state
+      heading="No team selected"
+      message="Select a team to see its type mix and total base stats."
+      [compact]="true"
+    />
+  } @else if (s === 'loading') {
+    <div class="team-summary__loading">
+      <app-skeleton height="44px" />
+      <app-skeleton height="20px" />
+      <app-skeleton height="20px" />
+      <app-skeleton height="20px" />
+    </div>
+  } @else if (s === 'error') {
+    <app-error-state
+      heading="Couldn't load the summary"
+      [error]="loadError"
+      [compact]="true"
+      (retry)="retry.emit()"
+    />
+  } @else {
+    <p class="team-summary__total">
+      <span class="team-summary__total-value">{{ s.totalBaseStats }}</span>
+      <span class="team-summary__total-label">total base stats</span>
+    </p>
+    @if (s.unresolvedCount > 0) {
+      <p class="team-summary__note" role="status">
+        {{ s.unresolvedCount }} Pokémon couldn't be found and are left out.
+      </p>
+    }
+    <h3 class="team-summary__subtitle">Type distribution</h3>
+    <ul class="team-summary__types">
+      @for (item of s.typeDistribution; track item.type) {
+        <li class="team-summary__type">
+          <app-type-badge [type]="item.type" />
+          <span
+            class="team-summary__bar"
+            [style.width.%]="(item.count / s.typeDistribution[0].count) * 100"
+            [style.background-color]="typeColors[item.type]"
+          ></span>
+          <span class="team-summary__count">{{ item.count }}</span>
+        </li>
+      }
+    </ul>
+  }
+</section>
