@@ -3,16 +3,18 @@ import { toSignal } from '@angular/core/rxjs-interop';
 
 import { PokemonSelectors } from '../pokedex/state/pokemon.selectors';
 import { PokemonStore } from '../pokedex/state/pokemon.store';
+import { TeamBuilderFormComponent } from './components/team-builder-form/team-builder-form.component';
 import { TeamListComponent } from './components/team-list/team-list.component';
 import { TeamSummaryComponent } from './components/team-summary/team-summary.component';
 import { SelectedTeamService } from './services/selected-team.service';
+import { NewTeam } from './models/team.model';
 import { TeamSelectors } from './state/team.selectors';
 import { TeamStore } from './state/team.store';
 
 /** Teams page: the team list and the summary of the selected team. */
 @Component({
   selector: 'app-teams-page',
-  imports: [TeamListComponent, TeamSummaryComponent],
+  imports: [TeamBuilderFormComponent, TeamListComponent, TeamSummaryComponent],
   templateUrl: './teams.component.html',
   styleUrl: './teams.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +41,10 @@ export class TeamsPage implements OnInit {
 
   protected retryPokemon(): void {
     this.pokemonStore.loadAll();
+  }
+
+  protected createTeam(team: NewTeam): void {
+    this.teamStore.createTeam(team);
   }
 
   protected deleteTeam(id: string): void {

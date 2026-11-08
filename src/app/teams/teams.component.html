@@ -12,6 +12,8 @@
     />
 
     <aside class="teams-page__aside">
+      <app-team-builder-form (create)="createTeam($event)" />
+
       <app-team-summary
         [team]="selection.selectedTeam()"
         [summary]="selection.summary()"

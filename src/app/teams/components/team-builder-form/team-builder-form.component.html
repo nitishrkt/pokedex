@@ -1,0 +1,53 @@
+<form class="builder" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <h2 class="builder__title">New team</h2>
+
+  <div class="builder__field">
+    <label class="builder__label" for="team-name">Team name</label>
+    <input
+      id="team-name"
+      class="builder__input"
+      type="text"
+      autocomplete="off"
+      formControlName="name"
+      [attr.maxlength]="nameMaxLength + 10"
+      [attr.aria-invalid]="showErrors(name)"
+      aria-describedby="team-name-hint"
+    />
+    <p id="team-name-hint" class="builder__hint" aria-live="polite">
+      @if (name.pending) {
+        Checking name…
+      } @else if (showErrors(name)) {
+        <span class="builder__error">
+          @if (name.hasError('required')) {
+            Give your team a name.
+          } @else if (name.hasError('nameLength')) {
+            Use 3 to {{ nameMaxLength }} characters.
+          } @else if (name.hasError('nameTaken')) {
+            You already have a team with this name.
+          }
+        </span>
+      } @else {
+        3 to {{ nameMaxLength }} characters, unique among your teams.
+      }
+    </p>
+  </div>
+
+  <div class="builder__field">
+    <label class="builder__label" for="team-pokemon">Pokémon (1 to 6)</label>
+    <app-pokemon-picker
+      inputId="team-pokemon"
+      describedBy="team-pokemon-error"
+      formControlName="pokemonIds"
+      [invalid]="showErrors(pokemonIds)"
+    />
+    <p id="team-pokemon-error" class="builder__hint" aria-live="polite">
+      @if (showErrors(pokemonIds)) {
+        <span class="builder__error">Pick at least 1 Pokémon.</span>
+      }
+    </p>
+  </div>
+
+  <button class="builder__submit" type="submit" [disabled]="status() === 'PENDING'">
+    Create team
+  </button>
+</form>
