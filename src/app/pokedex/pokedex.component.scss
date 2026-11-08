@@ -6,6 +6,15 @@
   min-width: 0;
   margin: 0 auto;
 
+  // On wide screens, make room for the open panel instead of covering the table.
+  @media (min-width: 1200px) {
+    transition: padding-right 0.28s ease;
+
+    &--panel-open {
+      padding-right: calc(var(--panel-width) + 16px);
+    }
+  }
+
   &__header {
     display: flex;
     flex-wrap: wrap;

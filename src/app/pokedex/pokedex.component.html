@@ -1,4 +1,4 @@
-<section class="pokedex-page">
+<section class="pokedex-page" [class.pokedex-page--panel-open]="panelOpen()">
   <header class="pokedex-page__header">
     <h1 class="pokedex-page__title">Pokédex</h1>
     <p class="pokedex-page__summary" role="status">{{ summary() }}</p>
@@ -14,10 +14,10 @@
   <app-pokemon-table
     [state]="table()"
     [sort]="query().sort"
-    [selectedId]="selectedId()"
+    [selectedId]="panelOpen() ? selectedId() : null"
     [pageSize]="query().pageSize"
     (sortChange)="store.setSort($event)"
-    (rowSelect)="selectedId.set($event)"
+    (rowSelect)="selectPokemon($event)"
     (retry)="store.loadAll()"
     (clearFilters)="clearFilters()"
   />
@@ -31,5 +31,13 @@
     [pageSizeOptions]="pageSizeOptions"
     (pageChange)="store.setPage($event)"
     (pageSizeChange)="store.setPageSize($event)"
+  />
+
+  <app-pokemon-detail-panel
+    [open]="panelOpen()"
+    [pokemon]="selectedPokemon()"
+    [detail]="selectedDetail()"
+    (dismissed)="panelOpen.set(false)"
+    (retry)="retryDetail()"
   />
 </section>
