@@ -23,8 +23,9 @@
         />
       } @else {
         <ul class="team-list__grid">
-          @for (team of current.data; track team.id) {
-            <li>
+          <!-- Tracked by creation time, which an optimistic team shares with its saved copy, so it does not re-enter when the server id arrives. -->
+          @for (team of current.data; track team.createdAt + team.name; let i = $index) {
+            <li class="team-list__item" [style.--enter-delay.ms]="i * 60">
               <app-team-card
                 [team]="team"
                 [catalog]="catalog()"

@@ -13,4 +13,21 @@
     padding: 0;
     list-style: none;
   }
+
+  // Cards fade and rise in one after another; only newly rendered cards animate.
+  &__item {
+    animation: team-enter 0.35s ease-out both;
+    animation-delay: var(--enter-delay, 0ms);
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
+
+@keyframes team-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
