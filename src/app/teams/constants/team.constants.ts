@@ -10,3 +10,6 @@ export const TEAM_MAX_SIZE = 6;
 /** Shown instead of the generic network message when the mock is down. */
 export const TEAMS_SERVER_UNREACHABLE_MESSAGE =
   "Can't reach the teams server. Is the mock server running on port 4000?";
+
+/** localStorage key holding the id of the selected team. */
+export const SELECTED_TEAM_STORAGE_KEY = 'pokedex.selectedTeamId';
