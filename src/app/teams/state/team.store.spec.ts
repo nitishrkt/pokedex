@@ -104,6 +104,7 @@ describe('TeamStore', () => {
 
       expect(snapshot().teams[0]).toEqual({ ...HOENN, pending: false });
       expect(snapshot().teams.length).toBe(3);
+      expect(toast.toasts()).toEqual([expect.objectContaining({ kind: 'success' })]);
     });
 
     it('rolls back and shows an error toast when the server fails', () => {
@@ -140,7 +141,9 @@ describe('TeamStore', () => {
       deleteRequests[0].next();
       deleteRequests[0].complete();
       expect(names()).toEqual(['Johto']);
-      expect(toast.toasts()).toEqual([]);
+      expect(toast.toasts()).toEqual([
+        expect.objectContaining({ kind: 'success', message: 'Team "Kanto" deleted.' }),
+      ]);
     });
 
     it('puts the team back at its old position and toasts when the server fails', () => {

@@ -79,7 +79,10 @@ export class TeamStore {
       .createTeam$({ ...input, trainerId: DEFAULT_TRAINER_ID, createdAt })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (saved) => this.replaceTeam(tempId, saved),
+        next: (saved) => {
+          this.replaceTeam(tempId, saved);
+          this.toast.success(`Team "${saved.name}" created.`);
+        },
         error: (error: AppError) => {
           this.removeTeam(tempId);
           this.toast.error(`Couldn't create "${input.name}". ${error.message}`);
@@ -105,6 +108,7 @@ export class TeamStore {
       .deleteTeam$(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
+        next: () => this.toast.success(`Team "${team.name}" deleted.`),
         error: (error: AppError) => {
           this.restoreTeam(team, index);
           this.toast.error(`Couldn't delete "${team.name}". ${error.message}`);
