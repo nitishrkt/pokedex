@@ -1,0 +1,242 @@
+@use 'app/common/styles/shared' as *;
+
+$duration: 0.28s;
+
+:host {
+  display: contents;
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-panel);
+  display: flex;
+  flex-direction: column;
+  width: min(var(--panel-width), 100vw);
+  border-left: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  box-shadow: var(--shadow-elevated);
+  transform: translateX(100%);
+  visibility: hidden;
+  // Hide after the slide-out ends, so the closed panel is not focusable.
+  transition:
+    transform $duration ease,
+    visibility 0s linear $duration;
+
+  &--open {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform $duration ease,
+      visibility 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &__backdrop {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    &__backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: calc(var(--z-panel) - 1);
+      display: block;
+      border: 0;
+      padding: 0;
+      background: var(--color-surface-overlay);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $duration ease;
+
+      &--open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 60px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__id {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  &__close {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-border);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__sr {
+    @extend %visually-hidden;
+  }
+
+  &__body {
+    @include custom-scrollbar;
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  &__hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__sprite {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+
+    &--missing {
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--color-border);
+      color: var(--color-text-muted);
+      font-size: 2rem;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__types {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__facts {
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    font-size: 0.875rem;
+
+    dt {
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__section {
+    margin-top: 20px;
+  }
+
+  &__heading {
+    margin-bottom: 8px;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  &__stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--color-border);
+
+    &--total {
+      grid-column: 1 / -1;
+      color: var(--color-accent);
+    }
+  }
+
+  // Fixed height for all four states, so the panel does not jump on load.
+  &__abilities {
+    min-height: 168px;
+  }
+
+  &__ability-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 72px;
+  }
+
+  &__ability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__ability-name {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__hidden-tag {
+    margin-left: 6px;
+    padding: 1px 6px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 400;
+  }
+
+  &__ability-effect {
+    margin: 2px 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+  }
+}

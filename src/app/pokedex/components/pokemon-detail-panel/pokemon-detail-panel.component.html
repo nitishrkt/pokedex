@@ -1,0 +1,120 @@
+<button
+  class="panel__backdrop"
+  type="button"
+  tabindex="-1"
+  aria-hidden="true"
+  [class.panel__backdrop--open]="open()"
+  (click)="dismissed.emit()"
+></button>
+
+<aside
+  class="panel"
+  [class.panel--open]="open()"
+  role="complementary"
+  aria-label="Pokémon details"
+  [attr.aria-hidden]="open() ? null : 'true'"
+  [attr.inert]="open() ? null : ''"
+>
+  <header class="panel__header">
+    <h2 class="panel__title">
+      @if (pokemon(); as p) {
+        {{ p.name | displayName }}
+        <span class="panel__id">#{{ p.id }}</span>
+      }
+    </h2>
+    <button #closeButton class="panel__close" type="button" (click)="dismissed.emit()">
+      <img src="assets/icons/ic_close.svg" width="20" height="20" alt="" aria-hidden="true" />
+      <span class="panel__sr">Close details</span>
+    </button>
+  </header>
+
+  @if (pokemon(); as p) {
+    <div class="panel__body">
+      <div class="panel__hero">
+        @if (p.spriteUrl; as url) {
+          <img class="panel__sprite" [src]="url" width="96" height="96" alt="" />
+        } @else {
+          <span class="panel__sprite panel__sprite--missing" aria-hidden="true">?</span>
+        }
+        <div class="panel__meta">
+          <span class="panel__types">
+            @for (type of p.types; track type) {
+              <app-type-badge [type]="type" />
+            }
+          </span>
+          <dl class="panel__facts">
+            <div>
+              <dt>Height</dt>
+              <dd>{{ p.height / 10 }} m</dd>
+            </div>
+            <div>
+              <dt>Weight</dt>
+              <dd>{{ p.weight / 10 }} kg</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <section class="panel__section" aria-labelledby="panel-stats">
+        <h3 id="panel-stats" class="panel__heading">Base stats</h3>
+        <app-stats-radar-chart [stats]="p.stats" [color]="typeColors[p.types[0]]" />
+        <ul class="panel__stats">
+          @for (stat of statLabels; track stat.key) {
+            <li class="panel__stat">
+              <span>{{ stat.full }}</span>
+              <strong>{{ p.stats[stat.key] }}</strong>
+            </li>
+          }
+          <li class="panel__stat panel__stat--total">
+            <span>Total</span>
+            <strong>{{ p.totalStats }}</strong>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel__section" aria-labelledby="panel-abilities">
+        <h3 id="panel-abilities" class="panel__heading">Abilities</h3>
+        <div class="panel__abilities" [attr.aria-busy]="detail()?.status !== 'success'">
+          @let d = detail();
+          @if (d === null || d.status === 'loading') {
+            @for (n of [1, 2]; track n) {
+              <div class="panel__ability-skeleton">
+                <app-skeleton variant="text" width="40%" />
+                <app-skeleton variant="text" width="90%" />
+              </div>
+            }
+          } @else if (d.status === 'error') {
+            <app-error-state
+              heading="Couldn't load abilities"
+              [error]="d.error"
+              [compact]="true"
+              (retry)="retry.emit()"
+            />
+          } @else if (d.data.abilities.length === 0) {
+            <app-empty-state
+              heading="No abilities listed"
+              message="PokéAPI has no abilities for this Pokémon."
+              [compact]="true"
+            />
+          } @else {
+            <ul class="panel__ability-list">
+              @for (ability of d.data.abilities; track ability.name) {
+                <li class="panel__ability">
+                  <p class="panel__ability-name">
+                    {{ ability.name | displayName }}
+                    @if (ability.isHidden) {
+                      <span class="panel__hidden-tag">Hidden</span>
+                    }
+                  </p>
+                  <p class="panel__ability-effect">
+                    {{ ability.shortEffect ?? 'No description available.' }}
+                  </p>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</aside>
