@@ -13,3 +13,6 @@ export const TEAMS_SERVER_UNREACHABLE_MESSAGE =
 
 /** localStorage key holding the id of the selected team. */
 export const SELECTED_TEAM_STORAGE_KEY = 'pokedex.selectedTeamId';
+
+/** Wait after the last keystroke before checking a team name against the list. */
+export const TEAM_NAME_CHECK_DEBOUNCE_MS = 300;
