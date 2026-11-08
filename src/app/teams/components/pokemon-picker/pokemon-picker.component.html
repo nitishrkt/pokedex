@@ -1,0 +1,114 @@
+<div class="picker">
+  @if (selected().length > 0) {
+    <ul class="picker__chips" aria-label="Selected Pokémon">
+      @for (pokemon of selected(); track pokemon.id) {
+        <li class="picker__chip">
+          @if (pokemon.spriteUrl; as sprite) {
+            <img class="picker__chip-sprite" [src]="sprite" width="24" height="24" alt="" />
+          }
+          <span>{{ pokemon.name | displayName }}</span>
+          <button
+            class="picker__chip-remove"
+            type="button"
+            [disabled]="disabled()"
+            [attr.aria-label]="'Remove ' + (pokemon.name | displayName)"
+            (click)="remove(pokemon)"
+          >
+            <img src="assets/icons/ic_close.svg" width="12" height="12" alt="" aria-hidden="true" />
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="picker__field">
+    <input
+      class="picker__input"
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      aria-autocomplete="list"
+      [id]="inputId()"
+      [attr.aria-expanded]="popupVisible()"
+      [attr.aria-controls]="
+        popupVisible() && options().length > 0 ? 'pokemon-picker-listbox' : null
+      "
+      [attr.aria-activedescendant]="
+        activeIndex() >= 0 ? 'pokemon-picker-option-' + activeIndex() : null
+      "
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-invalid]="invalid()"
+      [disabled]="disabled() || full()"
+      [placeholder]="full() ? 'Team is full (6 of 6)' : 'Search Pokémon to add…'"
+      [value]="text()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="open.set(true)"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+    />
+
+    @if (popupVisible()) {
+      <!-- mousedown is cancelled so clicking inside keeps the input focused. -->
+      <div class="picker__popup" (mousedown)="$event.preventDefault()">
+        @let current = view();
+        @if (current?.status === 'loading') {
+          <div class="picker__loading" aria-busy="true">
+            @for (n of [1, 2, 3]; track n) {
+              <app-skeleton height="36px" />
+            }
+          </div>
+        } @else if (current !== null && current.status === 'error') {
+          <app-error-state
+            heading="Search failed"
+            [error]="current.error"
+            [compact]="true"
+            (retry)="retry()"
+          />
+        } @else if (options().length === 0) {
+          <app-empty-state
+            heading="No Pokémon found"
+            message="Try another name."
+            [compact]="true"
+          />
+        } @else {
+          <ul
+            id="pokemon-picker-listbox"
+            class="picker__options"
+            role="listbox"
+            aria-label="Matching Pokémon"
+          >
+            @for (pokemon of options(); track pokemon.id; let i = $index) {
+              <!-- Keyboard use goes through the combobox input (aria-activedescendant), so options are not focusable. -->
+              <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+              <li
+                class="picker__option"
+                role="option"
+                [id]="'pokemon-picker-option-' + i"
+                [class.picker__option--active]="i === activeIndex()"
+                [attr.aria-selected]="i === activeIndex()"
+                [attr.aria-disabled]="isSelected(pokemon)"
+                (click)="add(pokemon)"
+              >
+                @if (pokemon.spriteUrl; as sprite) {
+                  <img class="picker__option-sprite" [src]="sprite" width="32" height="32" alt="" />
+                } @else {
+                  <span class="picker__option-sprite"></span>
+                }
+                <span class="picker__option-name">{{ pokemon.name | displayName }}</span>
+                @if (isSelected(pokemon)) {
+                  <span class="picker__added">Added</span>
+                } @else {
+                  @for (type of pokemon.types; track type) {
+                    <app-type-badge [type]="type" />
+                  }
+                }
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  </div>
+
+  <p class="picker__count" aria-live="polite">{{ selected().length }} of {{ maxSize }} picked</p>
+</div>
