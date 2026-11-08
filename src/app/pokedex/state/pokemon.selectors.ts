@@ -232,4 +232,27 @@ export class PokemonSelectors {
     distinctUntilChanged(sameAsyncState),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  /**
+   * The cached Pokémon by id as view state, for features that look Pokémon up
+   * (teams): `loading` until the list arrives, or `error` so they can offer a retry.
+   */
+  readonly catalog$: Observable<AsyncState<Readonly<Record<number, Pokemon>>>> = combineLatest([
+    this.entities$,
+    select(
+      this.state$,
+      ({ listStatus, listError }) => ({ listStatus, listError }),
+      (previous, current) =>
+        previous.listStatus === current.listStatus && previous.listError === current.listError,
+    ),
+  ]).pipe(
+    map(([entities, { listStatus, listError }]) => {
+      if (listStatus === 'loaded') {
+        return successState(entities);
+      }
+      return listStatus === 'error' && listError ? errorState(listError) : loadingState();
+    }),
+    distinctUntilChanged(sameAsyncState),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 }
