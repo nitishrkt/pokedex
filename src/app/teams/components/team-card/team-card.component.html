@@ -1,0 +1,75 @@
+@let t = team();
+<article
+  class="team-card"
+  [class.team-card--selected]="selected()"
+  [class.team-card--pending]="t.pending"
+>
+  <button
+    class="team-card__select"
+    type="button"
+    [attr.aria-pressed]="selected()"
+    [disabled]="t.pending"
+    (click)="toggleSelect.emit()"
+  >
+    <span class="team-card__head">
+      @if (avatarUrl(); as url) {
+        <img
+          class="team-card__avatar"
+          [src]="url"
+          width="32"
+          height="32"
+          alt=""
+          (error)="onAvatarError()"
+        />
+      } @else {
+        <span class="team-card__avatar team-card__avatar--initials" aria-hidden="true">
+          {{ initials() }}
+        </span>
+      }
+      <span class="team-card__titles">
+        <span class="team-card__name">{{ t.name }}</span>
+        <span class="team-card__sub">
+          {{ t.trainer?.name ?? 'Unknown trainer' }}
+          @if (t.pending) {
+            · Saving…
+          } @else {
+            · {{ t.createdAt | date: 'mediumDate' }}
+          }
+        </span>
+      </span>
+    </span>
+
+    <span class="team-card__members">
+      @for (member of members(); track member.key) {
+        @if (member.pokemon; as pokemon) {
+          @if (pokemon.spriteUrl; as sprite) {
+            <img
+              class="team-card__sprite"
+              [src]="sprite"
+              width="40"
+              height="40"
+              alt=""
+              [title]="pokemon.name"
+            />
+          } @else {
+            <span class="team-card__sprite team-card__sprite--missing" aria-hidden="true">?</span>
+          }
+        } @else if (catalog().status === 'loading') {
+          <app-skeleton class="team-card__sprite" variant="circle" height="40px" />
+        } @else {
+          <span class="team-card__sprite team-card__sprite--missing" aria-hidden="true">?</span>
+        }
+      }
+    </span>
+  </button>
+
+  <button
+    class="team-card__delete"
+    type="button"
+    [disabled]="t.pending"
+    [attr.aria-label]="'Delete team ' + t.name"
+    (click)="remove.emit()"
+  >
+    <img src="assets/icons/ic_delete.svg" width="18" height="18" alt="" aria-hidden="true" />
+  </button>
+</article>

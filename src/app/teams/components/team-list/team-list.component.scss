@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.team-list {
+  // Keeps the error and empty states from collapsing the column.
+  min-height: 3 * 128px;
+
+  &__grid {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}

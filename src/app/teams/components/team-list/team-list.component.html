@@ -1,0 +1,41 @@
+@let current = state();
+<div class="team-list" [attr.aria-busy]="current.status === 'loading'">
+  @switch (current.status) {
+    @case ('loading') {
+      <ul class="team-list__grid">
+        @for (n of skeletonCards; track n) {
+          <li><app-skeleton height="128px" /></li>
+        }
+      </ul>
+    }
+    @case ('error') {
+      <app-error-state
+        heading="Couldn't load your teams"
+        [error]="current.error"
+        (retry)="retry.emit()"
+      />
+    }
+    @case ('success') {
+      @if (current.data.length === 0) {
+        <app-empty-state
+          heading="No teams yet"
+          message="Build your first team with the form and it will show up here."
+        />
+      } @else {
+        <ul class="team-list__grid">
+          @for (team of current.data; track team.id) {
+            <li>
+              <app-team-card
+                [team]="team"
+                [catalog]="catalog()"
+                [selected]="team.id === selectedId()"
+                (toggleSelect)="toggleSelect.emit(team.id)"
+                (remove)="remove.emit(team.id)"
+              />
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+</div>
